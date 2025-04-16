@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Culture KPI Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* SONER Logo Animation */
+        @keyframes sonerScan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes sonerBlip { 0%, 20%, 100% { opacity: 0; } 2%, 15% { opacity: 1; } 3% { transform: scale(1.2); } }
+        
+        /* SONER Logo styles */
+        .soner-logo { display: flex; align-items: center; color: white; font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 300; }
+        .soner-radar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid white; margin: 0 3px; position: relative; background-color: rgba(255, 255, 255, 0.05); overflow: hidden; }
+        .soner-scanner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; animation: sonerScan 4s linear infinite; transform-origin: center; }
+        .soner-scanner::before { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 50%; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.4)); transform-origin: bottom left; clip-path: polygon(0 0, 100% 0, 0 100%); }
+        .soner-scanner::after { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 1px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1)); transform-origin: left center; box-shadow: 0 0 4px rgba(255, 255, 255, 0.8); }
+        .soner-blip { position: absolute; width: 2px; height: 2px; background-color: white; border-radius: 50%; opacity: 0; box-shadow: 0 0 4px white; }
+        .soner-blip:nth-child(1) { top: 25%; left: 30%; animation: sonerBlip 4s 1s infinite; }
+        .soner-blip:nth-child(2) { top: 65%; left: 60%; animation: sonerBlip 4s 2.5s infinite; }
+        .soner-tagline { color: white; font-size: 8px; text-transform: uppercase; font-weight: 500; letter-spacing: 0.5em; margin-left: 10px; opacity: 0.8; }
+
+        :root {
+            --primary: #4285f4;
+            --primary-light: #1a2233;
+            --primary-dark: #8ab4f8;
+            --secondary: #34a853;
+            --secondary-light: #1a2a1e;
+            --warning: #fbbc04;
+            --warning-light: #332a1a;
+            --danger: #ea4335;
+            --danger-light: #331f1e;
+            --gray-100: #1e1e1e;
+            --gray-200: #2d2d2d;
+            --gray-300: #3d3d3d;
+            --gray-400: #4d4d4d;
+            --gray-500: #777777;
+            --gray-600: #a0a0a0;
+            --gray-700: #c0c0c0;
+            --gray-800: #e0e0e0;
+            --gray-900: #f0f0f0;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 15px 25px rgba(0, 0, 0, 0.6);
+            --radius-sm: 4px;
+            --radius: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+            --bg-color: #000000;
+            --card-bg: #121212;
+            --section-bg: #181818;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--gray-800);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a73e8 0%, #174ea6 100%);
+            color: white;
+            padding: 32px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIxMDAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZGIiBzdG9wLW9wYWNpdHk9Ii4wNSIgb2Zmc2V0PSIwJSIvPjxzdG9wIHN0b3AtY29sb3I9IiNGRkYiIHN0b3Atb3BhY2l0eT0iLjAyIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMTQ0MCAyMDBjLTEzMS44LTEyLjktMjY3LjgtMTkuNC00MDgtMTkuNC0xNDAuMiAwLTI3Ni4yIDYuNS00MDggMTkuNFYwaDgxNnYyMDB6IiBmaWxsPSJ1cmwoI2EpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 0;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--gray-900);
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        h3 {
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+        }
+        
+        h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .dashboard-section {
+            background-color: var(--section-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            margin-bottom: 32px;
+            transition: var(--transition);
+            border: 1px solid var(--gray-300);
+        }
+        
+        .dashboard-section:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .dashboard-section h2 {
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: 16px;
+            margin-bottom: 28px;
+            color: var(--gray-900);
+            font-size: 1.5rem;
+        }
+        
+        .dashboard-section h2 i {
+            margin-right: 12px;
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .metric-card {
+            background-color: var(--gray-100);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* Total Metric Cards */
+        .total-metric-card {
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+            border: 1px solid var(--primary);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .total-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--primary);
+            opacity: 1;
+        }
+        
+        .total-metric-card .metric-name {
+            color: var(--primary-dark);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        
+        .total-metric-card .metric-value {
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .total-metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(66, 133, 244, 0.25);
+        }
+        
+        /* YTD Metric Cards */
+        .ytd-metric-card {
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+            border: 1px solid var(--secondary);
+            box-shadow: 0 4px 12px rgba(52, 168, 83, 0.15);
+        }
+        
+        .ytd-metric-card::before {
+            background-color: var(--secondary);
+        }
+        
+        .ytd-metric-card .metric-name {
+            color: var(--secondary);
+        }
+        
+        .ytd-metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(52, 168, 83, 0.25);
+        }
+        
+        .metric-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .metric-name i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        
+        .metric-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .metric-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        
+        .stat-label {
+            color: var(--gray-600);
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .positive { 
+            background-color: var(--secondary-light); 
+            color: var(--secondary);
+        }
+        
+        .negative { 
+            background-color: var(--danger-light); 
+            color: var(--danger);
+        }
+        
+        .warning {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            margin-bottom: 28px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            border: 1px solid var(--gray-300);
+            transition: var(--transition);
+        }
+        
+        .chart-container:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Charts row for horizontal layout */
+        .charts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .charts-row .chart-container {
+            flex: 1;
+            min-width: 300px;
+            margin-bottom: 0;
+        }
+        
+        .tab-container {
+            margin-top: 24px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--gray-300);
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray-600);
+            border-radius: var(--radius) var(--radius) 0 0;
+            transition: var(--transition);
+            position: relative;
+            font-size: 0.95rem;
+        }
+        
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary);
+        }
+        
+        .tab-btn.active::after {
+            transform: scaleX(1);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 8px 0 24px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .insight-summary {
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            position: relative;
+        }
+        
+        .insight-summary::before {
+            content: '\f0eb';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            opacity: 0.2;
+        }
+        
+        .insight-summary h3 {
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .insight-summary h3 i {
+            margin-right: 10px;
+        }
+        
+        .insight-summary p {
+            margin: 0;
+            color: var(--gray-800);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        
+        .print-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(26, 115, 232, 0.5);
+        }
+        
+        /* Section Collapsible Styles */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: 16px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            color: var(--gray-900);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .section-title i {
+            margin-right: 12px;
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+        
+        .section-content {
+            max-height: 5000px;
+            overflow: hidden;
+            transition: max-height 0.8s ease, opacity 0.5s ease;
+            opacity: 1;
+        }
+        
+        .section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        
+        .section-toggle {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        
+        .section-toggle:hover {
+            background-color: rgba(66, 133, 244, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .section-toggle:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.3);
+        }
+        
+        .section-toggle i {
+            transition: transform 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .section-toggle.collapsed i {
+            transform: rotate(-180deg);
+        }
+        
+        /* Skeleton Loader */
+        .skeleton {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .metric-card .metric-value.skeleton {
+            height: 40px;
+            width: 100px;
+            border-radius: var(--radius-sm);
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                text-align: left;
+                padding: 12px;
+                border-radius: 0;
+            }
+            
+            .print-btn {
+                bottom: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                right: 20px;
+            }
+            
+            .container {
+                padding: 0 16px;
+            }
+            
+            .dashboard-section {
+                padding: 20px;
+                margin-bottom: 24px;
+            }
+            
+            .chart-container {
+                height: 350px;
+                padding: 16px;
+            }
+            
+            /* Stack charts vertically on mobile */
+            .charts-row {
+                flex-direction: column;
+            }
+            
+            .charts-row .chart-container {
+                width: 100%;
+                margin-bottom: 28px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-section h2 {
+                font-size: 1.3rem;
+            }
+            
+            .metric-value {
+                font-size: 1.6rem;
+            }
+            
+            .chart-container {
+                height: 300px;
+                padding: 12px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media print {
+            body {
+                background-color: white;
+            }
+            
+            .dashboard-section {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+            
+            .print-btn {
+                display: none;
+            }
+            
+            .tab-content {
+                display: block !important;
+            }
+            
+            .tab-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 15px;">
+                <div class="soner-logo">
+                    S<div class="soner-radar">
+                        <div class="soner-scanner"></div>
+                        <div class="soner-blip"></div>
+                        <div class="soner-blip"></div>
+                    </div>NER
+                    <span class="soner-tagline">Visual Intelligence</span>
+                </div>
+            </div>
+            <h1>Culture KPI Dashboard</h1>
+            <p>Q1 2025 Performance Analysis</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-chart-pie"></i> Total Metrics</h2>
+                <button class="section-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content">
+                <div class="insight-summary">
+                    <h3><i class="fas fa-lightbulb"></i> Total Performance</h3>
+                    <p>Aggregated metrics across Cultural Campaigns and UAE initiatives showing total impressions, engagements, and clicks with comparisons to forecast, MoM, and YTD performance.</p>
+                </div>
+                
+                <div class="metrics-grid" id="total-metrics-container">
+                    <!-- Total metric cards will be dynamically populated here -->
+                    <div class="metric-card">
+                        <div class="metric-name"><i class="fas fa-spinner fa-spin"></i> Loading total metrics...</div>
+                        <div class="metric-value">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-tachometer-alt"></i> Performance Overview</h2>
+                <button class="section-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content">
+            <div class="insight-summary">
+                <h3><i class="fas fa-lightbulb"></i> Key Insights</h3>
+                <p>Cultural Campaigns initiatives are performing above forecast across most metrics in Q1 2025. Cultural Campaigns shows the strongest performance with impressions exceeding forecast by 138.5% and engagement by 28.5%. Cultural Campaigns UAE is also performing well with impressions 217.0% above forecast.</p>
+            </div>
+            
+            <div class="metrics-grid" id="metrics-container">
+                <!-- Metric cards will be dynamically populated here -->
+                <div class="metric-card">
+                    <div class="metric-name"><i class="fas fa-spinner fa-spin"></i> Loading metrics...</div>
+                    <div class="metric-value">-</div>
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-section" id="monthly-trends">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-chart-line"></i> Monthly Trends</h2>
+                <button class="section-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content">
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="impressions">Impressions</button>
+                    <button class="tab-btn" data-tab="engagement">Engagement</button>
+                    <button class="tab-btn" data-tab="paid-sessions">Paid Sessions</button>
+                </div>
+                
+                <div class="tab-content active" id="impressions-tab">
+                    <div class="chart-container">
+                        <canvas id="impressions-trend-chart" data-lazy="true"></canvas>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="engagement-tab">
+                    <div class="chart-container">
+                        <canvas id="engagement-trend-chart" data-lazy="true"></canvas>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="paid-sessions-tab">
+                    <div class="chart-container">
+                        <canvas id="paid-sessions-trend-chart" data-lazy="true"></canvas>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-section" id="ytd-achievement">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-bullseye"></i> YTD Achievement</h2>
+                <button class="section-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content">
+            <div class="chart-container">
+                <canvas id="ytd-achievement-chart" data-lazy="true"></canvas>
+            </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-section" id="initiative-details">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-chart-bar"></i> Initiative Details</h2>
+                <button class="section-toggle" aria-label="Toggle section" aria-expanded="true">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="section-content">
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="cultural-campaigns">Cultural Campaigns</button>
+                    <button class="tab-btn" data-tab="cultural-campaigns-uae">Cultural Campaigns UAE</button>
+                </div>
+                
+                <div class="tab-content active" id="cultural-campaigns-tab">
+                    <h3>Cultural Campaigns Performance</h3>
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <canvas id="initiative-cards-cultural-campaigns-impressions-chart" data-lazy="true"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="initiative-cards-cultural-campaigns-engagement-chart" data-lazy="true"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="initiative-cards-cultural-campaigns-paid-sessions-chart" data-lazy="true"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="cultural-campaigns-uae-tab">
+                    <h3>Cultural Campaigns UAE Performance</h3>
+                    <div class="charts-row">
+                        <div class="chart-container">
+                            <canvas id="initiative-cards-cultural-campaigns-uae-impressions-chart" data-lazy="true"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="initiative-cards-cultural-campaigns-uae-engagement-chart" data-lazy="true"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="initiative-cards-cultural-campaigns-uae-paid-sessions-chart" data-lazy="true"></canvas>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="print-btn" title="Print Dashboard" id="print-dashboard">
+        <i class="fas fa-print"></i>
+    </button>
+    
+    <!-- CSV Data -->
+    <script>
+        // CSV data as a string to avoid CORS issues
+        const csvData = `﻿Key,Initiative Cards,Sub Initiative,Metric,Month,Actual,Forecast,YTD Actual Totals,YTD Forecast Totals,,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-January,Initiative Cards,Cultural Campaigns,Impressions,January,"11,093,087","8,906,076","11,093,087","8,906,076",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-February,Initiative Cards,Cultural Campaigns,Impressions,February,"44,281,523","13,542,085","55,374,610","22,448,161",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-March,Initiative Cards,Cultural Campaigns,Impressions,March,"5,009,757","2,873,434","60,384,367","25,321,595",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-April,Initiative Cards,Cultural Campaigns,Impressions,April,0,"149,636,511","60,384,367","174,958,106",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-May,Initiative Cards,Cultural Campaigns,Impressions,May,0,"253,424,885","60,384,367","428,382,991",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-June,Initiative Cards,Cultural Campaigns,Impressions,June,0,"249,559,028","60,384,367","677,942,019",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-July,Initiative Cards,Cultural Campaigns,Impressions,July,0,"116,838,407","60,384,367","794,780,426",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-August,Initiative Cards,Cultural Campaigns,Impressions,August,0,"116,838,407","60,384,367","911,618,833",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-September,Initiative Cards,Cultural Campaigns,Impressions,September,0,"152,218,656","60,384,367","1,063,837,489",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-October,Initiative Cards,Cultural Campaigns,Impressions,October,0,"302,675,258","60,384,367","1,366,512,747",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-November,Initiative Cards,Cultural Campaigns,Impressions,November,0,"302,675,258","60,384,367","1,669,188,005",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Impressions-December,Initiative Cards,Cultural Campaigns,Impressions,December,0,"211,385,720","60,384,367","1,880,573,725",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-January,Initiative Cards,Cultural Campaigns,Engagement,January,"2,315,327","1,907,929","2,315,327","1,907,929",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-February,Initiative Cards,Cultural Campaigns,Engagement,February,"2,728,808","2,276,389","5,044,135","4,184,318",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-March,Initiative Cards,Cultural Campaigns,Engagement,March,"789,408","354,567","5,833,543","4,538,885",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-April,Initiative Cards,Cultural Campaigns,Engagement,April,0,"24,748,348","5,833,543","29,287,233",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-May,Initiative Cards,Cultural Campaigns,Engagement,May,0,"43,833,154","5,833,543","73,120,387",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-June,Initiative Cards,Cultural Campaigns,Engagement,June,0,"42,906,051","5,833,543","116,026,438",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-July,Initiative Cards,Cultural Campaigns,Engagement,July,0,"19,728,438","5,833,543","135,754,876",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-August,Initiative Cards,Cultural Campaigns,Engagement,August,0,"19,728,438","5,833,543","155,483,314",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-September,Initiative Cards,Cultural Campaigns,Engagement,September,0,"25,930,657","5,833,543","181,413,971",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-October,Initiative Cards,Cultural Campaigns,Engagement,October,0,"52,385,843","5,833,543","233,799,814",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-November,Initiative Cards,Cultural Campaigns,Engagement,November,0,"52,385,843","5,833,543","286,185,657",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Engagement-December,Initiative Cards,Cultural Campaigns,Engagement,December,0,"35,357,798","5,833,543","321,543,455",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-January,Initiative Cards,Cultural Campaigns,Paid Sessions,January,"10,317","12,995","10,317","12,995",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-February,Initiative Cards,Cultural Campaigns,Paid Sessions,February,"21,087","15,332","31,404","28,327",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-March,Initiative Cards,Cultural Campaigns,Paid Sessions,March,"9,703","1,355","41,107","29,682",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-April,Initiative Cards,Cultural Campaigns,Paid Sessions,April,0,"179,051","41,107","208,733",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-May,Initiative Cards,Cultural Campaigns,Paid Sessions,May,0,"195,321","41,107","404,054",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-June,Initiative Cards,Cultural Campaigns,Paid Sessions,June,0,"195,518","41,107","599,572",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-July,Initiative Cards,Cultural Campaigns,Paid Sessions,July,0,"142,706","41,107","742,278",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-August,Initiative Cards,Cultural Campaigns,Paid Sessions,August,0,"142,706","41,107","884,984",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-September,Initiative Cards,Cultural Campaigns,Paid Sessions,September,0,"181,415","41,107","1,066,399",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-October,Initiative Cards,Cultural Campaigns,Paid Sessions,October,0,"252,240","41,107","1,318,639",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-November,Initiative Cards,Cultural Campaigns,Paid Sessions,November,0,"252,240","41,107","1,570,879",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns-Paid Sessions-December,Initiative Cards,Cultural Campaigns,Paid Sessions,December,0,"252,239","41,107","1,823,118",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-January,Initiative Cards,Cultural Campaigns UAE,Impressions,January,"4,725,286","2,129,788","4,725,286","2,129,788",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-February,Initiative Cards,Cultural Campaigns UAE,Impressions,February,"9,809,950","2,969,176","14,535,236","5,098,964",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-March,Initiative Cards,Cultural Campaigns UAE,Impressions,March,"10,418,518","2,768,315","24,953,754","7,867,279",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-April,Initiative Cards,Cultural Campaigns UAE,Impressions,April,0,"11,858,333","24,953,754","19,725,612",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-May,Initiative Cards,Cultural Campaigns UAE,Impressions,May,0,"50,407,123","24,953,754","70,132,735",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-June,Initiative Cards,Cultural Campaigns UAE,Impressions,June,0,"50,407,123","24,953,754","120,539,858",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-July,Initiative Cards,Cultural Campaigns UAE,Impressions,July,0,"9,723,148","24,953,754","130,263,006",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-August,Initiative Cards,Cultural Campaigns UAE,Impressions,August,0,"9,723,148","24,953,754","139,986,154",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-September,Initiative Cards,Cultural Campaigns UAE,Impressions,September,0,"13,531,794","24,953,754","153,517,948",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-October,Initiative Cards,Cultural Campaigns UAE,Impressions,October,0,"56,995,085","24,953,754","210,513,033",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-November,Initiative Cards,Cultural Campaigns UAE,Impressions,November,0,"56,995,085","24,953,754","267,508,118",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Impressions-December,Initiative Cards,Cultural Campaigns UAE,Impressions,December,0,"18,446,295","24,953,754","285,954,413",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-January,Initiative Cards,Cultural Campaigns UAE,Engagement,January,"1,053,406","352,133","1,053,406","352,133",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-February,Initiative Cards,Cultural Campaigns UAE,Engagement,February,"870,832","490,915","1,924,238","843,048",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-March,Initiative Cards,Cultural Campaigns UAE,Engagement,March,"988,979","623,043","2,913,217","1,466,091",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-April,Initiative Cards,Cultural Campaigns UAE,Engagement,April,0,"1,960,624","2,913,217","3,426,715",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-May,Initiative Cards,Cultural Campaigns UAE,Engagement,May,0,"7,529,422","2,913,217","10,956,137",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-June,Initiative Cards,Cultural Campaigns UAE,Engagement,June,0,"7,529,422","2,913,217","18,485,559",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-July,Initiative Cards,Cultural Campaigns UAE,Engagement,July,0,"1,524,930","2,913,217","20,010,489",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-August,Initiative Cards,Cultural Campaigns UAE,Engagement,August,0,"1,524,930","2,913,217","21,535,419",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-September,Initiative Cards,Cultural Campaigns UAE,Engagement,September,0,"2,237,311","2,913,217","23,772,730",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-October,Initiative Cards,Cultural Campaigns UAE,Engagement,October,0,"8,618,658","2,913,217","32,391,388",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-November,Initiative Cards,Cultural Campaigns UAE,Engagement,November,0,"8,618,658","2,913,217","41,010,046",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Engagement-December,Initiative Cards,Cultural Campaigns UAE,Engagement,December,0,"3,049,860","2,913,217","44,059,906",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-January,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,January,"4,818","3,274","4,818","3,274",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-February,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,February,"5,726","4,565","10,544","7,839",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-March,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,March,"5,679","3,794","16,223","11,633",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-April,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,April,0,"18,232","16,223","29,865",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-May,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,May,0,"18,232","16,223","48,097",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-June,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,June,0,"18,232","16,223","66,329",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-July,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,July,0,"14,180","16,223","80,509",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-August,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,August,0,"14,180","16,223","94,689",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-September,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,September,0,"22,805","16,223","117,494",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-October,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,October,0,"28,361","16,223","145,855",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-November,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,November,0,"28,361","16,223","174,216",,,,,,,,,,,,,,
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-December,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,December,0,"28,361","16,223","202,577",,,,,,,,,,,,,,`;
+    </script>
+    
+    <!-- Tab functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up tab switching
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Get the tab to show
+                    const tabToShow = this.getAttribute('data-tab');
+                    
+                    // Hide all tabs and remove active class from buttons
+                    const tabContainer = this.closest('.tab-container');
+                    tabContainer.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    tabContainer.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Show the selected tab and add active class to button
+                    document.getElementById(tabToShow + '-tab').classList.add('active');
+                    this.classList.add('active');
+                });
+            });
+            
+            // Print functionality
+            document.getElementById('print-dashboard').addEventListener('click', function() {
+                window.print();
+            });
+        });
+    </script>
+    
+    <!-- Lazy Loading for Charts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const lazyCharts = document.querySelectorAll('canvas[data-lazy="true"]');
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const canvas = entry.target;
+                        const chartId = canvas.id;
+                        // Initialize the chart when it becomes visible
+                        initializeChart(chartId);
+                        observer.unobserve(canvas);
+                    }
+                });
+            });
+
+            lazyCharts.forEach(chart => observer.observe(chart));
+
+            function initializeChart(chartId) {
+                // Example chart initialization logic
+                console.log(`Initializing chart: ${chartId}`);
+                // Add your chart.js initialization code here
+            }
+        });
+    </script>
+    
+    <!-- Load JavaScript files -->
+    <script src="Culture.js"></script>
+    <script src="populateMetricCards.js"></script>
+    <script src="createCharts.js"></script>
+    <script src="collapsible.js"></script>
+    
+    <!-- Initialize dashboard -->
+    <script>
+        // Wait for the page to load and then initialize the dashboard
+        window.addEventListener('load', function() {
+            console.log('Page loaded, initializing dashboard...');
+            try {
+                if (window.dashboardFunctions && typeof window.dashboardFunctions.initializeDashboard === 'function') {
+                    window.dashboardFunctions.initializeDashboard(csvData);
+                    console.log('Dashboard initialized successfully');
+                } else {
+                    console.error('Dashboard functions not available');
+                    document.getElementById('metrics-container').innerHTML = `
+                        <div class="metric-card">
+                            <div class="metric-name"><i class="fas fa-exclamation-triangle"></i> Error</div>
+                            <div class="metric-value">Dashboard functions not available</div>
+                            <div class="metric-stats">
+                                <div class="metric-stat">
+                                    <span class="stat-label">Please check if Culture.js is loaded correctly.</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                document.getElementById('metrics-container').innerHTML = `
+                    <div class="metric-card">
+                        <div class="metric-name"><i class="fas fa-exclamation-triangle"></i> Error</div>
+                        <div class="metric-value">Failed to initialize dashboard</div>
+                        <div class="metric-stats">
+                            <div class="metric-stat">
+                                <span class="stat-label">Error: ${error.message}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
