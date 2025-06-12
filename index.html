@@ -692,7 +692,7 @@
                 </a>
             </div>
             <h1>Culture KPI Dashboard</h1>
-            <p>January-April 2025 Performance Analysis</p>
+            <p>January-May 2025 Performance Analysis</p>
         </div>
     </header>
     
@@ -856,12 +856,79 @@
     <!-- CSV Data -->
     <script>
         // CSV data as a string to avoid CORS issues
-        const csvData = `﻿Key,Initiative Cards,Sub Initiative,Metric,Month,Actual,Forecast,YTD Actual Totals,YTD Forecast Totals,,,,,,,,,,,,,,
-Initiative Cards-Cultural Campaigns-Impressions-January,Initiative Cards,Cultural Campaigns,Impressions,January,"11,093,087","8,906,076","11,093,087","8,906,076",,,,,,,,,,,,,,
-Initiative Cards-Cultural Campaigns-Impressions-February,Initiative Cards,Cultural Campaigns,Impressions,February,"44,281,523","13,542,085","55,374,610","22,448,161",,,,,,,,,,,,,,
-Initiative Cards-Cultural Campaigns-Impressions-March,Initiative Cards,Cultural Campaigns,Impressions,March,"5,009,757","2,873,434","60,384,367","25,321,595",,,,,,,,,,,,,,
-Initiative Cards-Cultural Campaigns-Impressions-April,Initiative Cards,Cultural Campaigns,Impressions,April,"170,295,498","123,366,906","230,679,844","148,688,501",,,,,,,,,,,,,,
-Initiative Cards-Cultural Campaigns-Impressions-May,Initiative Cards,Cultural Campaigns,Impressions,May,0,"253,424,885","60,384,367","428,382,991",,,,,,,,,,,,,,
+        const csvData = `Key,Initiative Cards,Sub Initiative,Metric,Month,Actual,Forecast,YTD Actual Totals,YTD Forecast Totals
+Initiative Cards-Cultural Campaigns-Impressions-January,Initiative Cards,Cultural Campaigns,Impressions,January,"11,093,087","8,906,076","11,093,087","8,906,076.00"
+Initiative Cards-Cultural Campaigns-Impressions-February,Initiative Cards,Cultural Campaigns,Impressions,February,"44,281,523","13,542,085","55,374,610","22,448,161.00"
+Initiative Cards-Cultural Campaigns-Impressions-March,Initiative Cards,Cultural Campaigns,Impressions,March,"5,009,736","2,873,434","60,384,346","25,321,595.00"
+Initiative Cards-Cultural Campaigns-Impressions-April,Initiative Cards,Cultural Campaigns,Impressions,April,"170,295,498","123,366,906","230,679,844","148,688,501.00"
+Initiative Cards-Cultural Campaigns-Impressions-May,Initiative Cards,Cultural Campaigns,Impressions,May,"337,487,924","167,532,779","568,167,768","316,221,280.00"
+Initiative Cards-Cultural Campaigns-Impressions-June,Initiative Cards,Cultural Campaigns,Impressions,June,0,"163,666,922","568,167,768","479,888,202.00"
+Initiative Cards-Cultural Campaigns-Impressions-July,Initiative Cards,Cultural Campaigns,Impressions,July,0,"119,178,346","568,167,768","599,066,548.00"
+Initiative Cards-Cultural Campaigns-Impressions-August,Initiative Cards,Cultural Campaigns,Impressions,August,0,"119,178,346","568,167,768","718,244,894.00"
+Initiative Cards-Cultural Campaigns-Impressions-September,Initiative Cards,Cultural Campaigns,Impressions,September,0,"254,303,058","568,167,768","972,547,952.00"
+Initiative Cards-Cultural Campaigns-Impressions-October,Initiative Cards,Cultural Campaigns,Impressions,October,0,"302,675,258","568,167,768","1,275,223,210.00"
+Initiative Cards-Cultural Campaigns-Impressions-November,Initiative Cards,Cultural Campaigns,Impressions,November,0,"302,675,258","568,167,768","1,577,898,468.00"
+Initiative Cards-Cultural Campaigns-Impressions-December,Initiative Cards,Cultural Campaigns,Impressions,December,0,"302,675,258","568,167,768","1,880,573,726.00"
+Initiative Cards-Cultural Campaigns-Engagement-January,Initiative Cards,Cultural Campaigns,Engagement,January,"2,315,327","1,907,929","2,315,327","1,907,929.00"
+Initiative Cards-Cultural Campaigns-Engagement-February,Initiative Cards,Cultural Campaigns,Engagement,February,"2,728,808","2,276,389","5,044,135","4,184,318.00"
+Initiative Cards-Cultural Campaigns-Engagement-March,Initiative Cards,Cultural Campaigns,Engagement,March,"789,408","354,567","5,833,543","4,538,885.00"
+Initiative Cards-Cultural Campaigns-Engagement-April,Initiative Cards,Cultural Campaigns,Engagement,April,"35,547,256","17,434,890","41,380,799","21,973,775.00"
+Initiative Cards-Cultural Campaigns-Engagement-May,Initiative Cards,Cultural Campaigns,Engagement,May,"54,045,722","28,303,597","95,426,521","50,277,372.00"
+Initiative Cards-Cultural Campaigns-Engagement-June,Initiative Cards,Cultural Campaigns,Engagement,June,0,"27,376,494","95,426,521","77,653,866.00"
+Initiative Cards-Cultural Campaigns-Engagement-July,Initiative Cards,Cultural Campaigns,Engagement,July,0,"20,388,192","95,426,521","98,042,058.00"
+Initiative Cards-Cultural Campaigns-Engagement-August,Initiative Cards,Cultural Campaigns,Engagement,August,0,"20,388,192","95,426,521","118,430,250.00"
+Initiative Cards-Cultural Campaigns-Engagement-September,Initiative Cards,Cultural Campaigns,Engagement,September,0,"45,955,677","95,426,521","164,385,927.00"
+Initiative Cards-Cultural Campaigns-Engagement-October,Initiative Cards,Cultural Campaigns,Engagement,October,0,"52,385,843","95,426,521","216,771,770.00"
+Initiative Cards-Cultural Campaigns-Engagement-November,Initiative Cards,Cultural Campaigns,Engagement,November,0,"52,385,843","95,426,521","269,157,613.00"
+Initiative Cards-Cultural Campaigns-Engagement-December,Initiative Cards,Cultural Campaigns,Engagement,December,0,"52,385,843","95,426,521","321,543,456.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-January,Initiative Cards,Cultural Campaigns,Paid Sessions,January,"10,317","12,995","10,317","12,995.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-February,Initiative Cards,Cultural Campaigns,Paid Sessions,February,"21,087","15,332","31,404","28,327.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-March,Initiative Cards,Cultural Campaigns,Paid Sessions,March,"14,968","1,355","46,372","29,682.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-April,Initiative Cards,Cultural Campaigns,Paid Sessions,April,"376,141","148,783","422,513","178,465.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-May,Initiative Cards,Cultural Campaigns,Paid Sessions,May,"429,733","201,673","852,246","380,138.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-June,Initiative Cards,Cultural Campaigns,Paid Sessions,June,0,"201,870","852,246","582,008.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-July,Initiative Cards,Cultural Campaigns,Paid Sessions,July,0,"145,137","852,246","727,145.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-August,Initiative Cards,Cultural Campaigns,Paid Sessions,August,0,"145,137","852,246","872,282.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-September,Initiative Cards,Cultural Campaigns,Paid Sessions,September,0,"194,118","852,246","1,066,400.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-October,Initiative Cards,Cultural Campaigns,Paid Sessions,October,0,"274,693","852,246","1,341,093.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-November,Initiative Cards,Cultural Campaigns,Paid Sessions,November,0,"252,240","852,246","1,593,333.00"
+Initiative Cards-Cultural Campaigns-Paid Sessions-December,Initiative Cards,Cultural Campaigns,Paid Sessions,December,0,"252,239","852,246","1,845,572.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-January,Initiative Cards,Cultural Campaigns UAE,Impressions,January,"4,725,286","2,129,788","4,725,286","2,129,788.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-February,Initiative Cards,Cultural Campaigns UAE,Impressions,February,"9,809,950","2,969,176","14,535,236","5,098,964.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-March,Initiative Cards,Cultural Campaigns UAE,Impressions,March,"10,417,627","2,768,315","24,952,863","7,867,279.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-April,Initiative Cards,Cultural Campaigns UAE,Impressions,April,"23,485,026","11,858,333","48,437,889","19,725,612.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-May,Initiative Cards,Cultural Campaigns UAE,Impressions,May,"30,656,299","11,858,333","79,094,188","31,583,945.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-June,Initiative Cards,Cultural Campaigns UAE,Impressions,June,0,"11,858,333","79,094,188","43,442,278.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-July,Initiative Cards,Cultural Campaigns UAE,Impressions,July,0,"9,723,148","79,094,188","53,165,426.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-August,Initiative Cards,Cultural Campaigns UAE,Impressions,August,0,"9,723,148","79,094,188","62,888,574.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-September,Initiative Cards,Cultural Campaigns UAE,Impressions,September,0,"52,080,584","79,094,188","114,969,158.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-October,Initiative Cards,Cultural Campaigns UAE,Impressions,October,0,"56,995,085","79,094,188","171,964,243.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-November,Initiative Cards,Cultural Campaigns UAE,Impressions,November,0,"56,995,085","79,094,188","228,959,328.00"
+Initiative Cards-Cultural Campaigns UAE-Impressions-December,Initiative Cards,Cultural Campaigns UAE,Impressions,December,0,"56,995,085","79,094,188","285,954,413.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-January,Initiative Cards,Cultural Campaigns UAE,Engagement,January,"1,053,406","352,133","1,053,406","352,133.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-February,Initiative Cards,Cultural Campaigns UAE,Engagement,February,"870,832","490,915","1,924,238","843,048.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-March,Initiative Cards,Cultural Campaigns UAE,Engagement,March,"988,830","623,043","2,913,068","1,466,091.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-April,Initiative Cards,Cultural Campaigns UAE,Engagement,April,"3,826,439","1,960,624","6,739,507","3,426,715.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-May,Initiative Cards,Cultural Campaigns UAE,Engagement,May,"4,406,813","1,960,624","11,146,320","5,387,339.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-June,Initiative Cards,Cultural Campaigns UAE,Engagement,June,0,"1,960,624","11,146,320","7,347,963.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-July,Initiative Cards,Cultural Campaigns UAE,Engagement,July,0,"1,524,930","11,146,320","8,872,893.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-August,Initiative Cards,Cultural Campaigns UAE,Engagement,August,0,"1,524,930","11,146,320","10,397,823.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-September,Initiative Cards,Cultural Campaigns UAE,Engagement,September,0,"7,806,109","11,146,320","18,203,932.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-October,Initiative Cards,Cultural Campaigns UAE,Engagement,October,0,"8,618,658","11,146,320","26,822,590.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-November,Initiative Cards,Cultural Campaigns UAE,Engagement,November,0,"8,618,658","11,146,320","35,441,248.00"
+Initiative Cards-Cultural Campaigns UAE-Engagement-December,Initiative Cards,Cultural Campaigns UAE,Engagement,December,0,"8,618,658","11,146,320","44,059,906.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-January,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,January,"4,818","3,274","4,818","3,274.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-February,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,February,"5,726","4,565","10,544","7,839.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-March,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,March,"7,213","3,794","17,757","11,633.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-April,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,April,"27,999","18,232","45,756","29,865.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-May,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,May,"26,719","18,232","72,475","48,097.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-June,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,June,0,"18,232","72,475","66,329.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-July,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,July,0,"14,180","72,475","80,509.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-August,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,August,0,"14,180","72,475","94,689.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-September,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,September,0,"22,805","72,475","117,494.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-October,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,October,0,"28,361","72,475","145,855.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-November,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,November,0,"28,361","72,475","174,216.00"
+Initiative Cards-Cultural Campaigns UAE-Paid Sessions-December,Initiative Cards,Cultural Campaigns UAE,Paid Sessions,December,0,"28,361","72,475","202,577.00"
 Initiative Cards-Cultural Campaigns-Impressions-June,Initiative Cards,Cultural Campaigns,Impressions,June,0,"249,559,028","60,384,367","677,942,019",,,,,,,,,,,,,,
 Initiative Cards-Cultural Campaigns-Impressions-July,Initiative Cards,Cultural Campaigns,Impressions,July,0,"116,838,407","60,384,367","794,780,426",,,,,,,,,,,,,,
 Initiative Cards-Cultural Campaigns-Impressions-August,Initiative Cards,Cultural Campaigns,Impressions,August,0,"116,838,407","60,384,367","911,618,833",,,,,,,,,,,,,,
