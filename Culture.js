@@ -512,20 +512,20 @@ function createActualVsForecastChart(canvasId, data, initiative, subInitiative, 
     
     const metricData = data.structured[initiative][subInitiative][metric];
     
-    // Get all months with data (only Q1 months)
+    // Get all months with data (January through May)
     const allMonths = Object.keys(metricData.actual);
     console.log(`All months in data: ${allMonths.join(', ')}`);
     
-    // Filter for January through April
-    const q1Months = ['January', 'February', 'March', 'April'];
-    const months = allMonths.filter(month => q1Months.includes(month));
+    // Filter for January through May
+    const availableMonths = ['January', 'February', 'March', 'April', 'May'];
+    const months = allMonths.filter(month => availableMonths.includes(month));
     
     if (months.length === 0) {
-      console.warn(`No Q1 monthly data found for ${initiative} - ${subInitiative} - ${metric}`);
+      console.warn(`No monthly data found for ${initiative} - ${subInitiative} - ${metric}`);
     }
     
     // Sort months chronologically
-    months.sort((a, b) => q1Months.indexOf(a) - q1Months.indexOf(b));
+    months.sort((a, b) => availableMonths.indexOf(a) - availableMonths.indexOf(b));
     console.log(`Found ${months.length} months of data: ${months.join(', ')}`);
     
     // Extract actual and forecast data
@@ -808,7 +808,7 @@ function createYTDAchievementChart(canvasId, data, ytdAchievement) {
 function createPerformanceHeatmap(canvasId, data, ytdAchievement) {
   const ctx = document.getElementById(canvasId).getContext('2d');
   
-  const latestMonth = 'April'; // Latest month with actual data
+  const latestMonth = 'May'; // Latest month with actual data
   const datasets = [];
   
   // Define performance color ranges using our new color palette
